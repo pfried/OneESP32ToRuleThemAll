@@ -1,0 +1,96 @@
+#########################################
+#                                       #
+#   ESPHome                             #
+#                                       #
+#########################################
+# Tecalor THZ 5.1 / 7.1 IBC topline (Stiebel Eltron LWZ 5.1 / 7.1 Premium).
+#
+# Integral unit (heating, DHW, ventilation), but the controller is a WPM:
+# the ISG shows it as "anlagen/tec/wpm" and the bus speaks the WPM property
+# set of the WPL/WPE family at 50 kbit/s. This variant therefore builds on
+# the WPM properties instead of the THZ ones.
+#
+# Bus capture on a THZ 5.1 IBC topline with ISG (passive, 50 kbit/s):
+#   0x100  ISG             polls 0x000c/0x4f41/0x4f43/0x4f46 @0x180, 0x000e @0x201
+#   0x180  Kessel          answers AUSSENTEMP, VORLAUF/RUECKLAUFISTTEMP_WP, HEIZUNGSDRUCK
+#   0x201  Speicher        answers SPEICHERISTTEMP (DHW tank)
+#   0x280  control panel   broadcasts ventilation/status data (not mapped yet)
+#   0x480  Manager         broadcasts date/time and PROGRAMMSCHALTER 0x4f1b
+#   0x500  fan/air module  polls MFG, reports 0x5132..0x5137 (not mapped yet)
+#   0x514  Heizmodul       broadcasts the daily energy counters (0x091a..0x092f)
+#   0x700  MFG             answers VORLAUFISTTEMP 0xfdf3 / RUECKLAUFISTTEMP 0xfdf4
+#
+# Only entries that showed up on the bus are included. Everything else of
+# the WPM base (brine source, 2nd mixed circuit, ...) does not apply here.
+esphome:
+  build_flags:
+    - "-DTHZ_IBC_TOPLINE"
+
+#########################################
+#                                       #
+#   Substitutions                       #
+#                                       #
+#########################################
+substitutions:
+  can_bus_bit_rate: 50kbps
+
+#########################################
+#                                       #
+#   CAN Bus                             #
+#                                       #
+#########################################
+canbus:
+  - id: !extend wp_can
+    bit_rate: $can_bus_bit_rate
+
+#########################################
+#                                       #
+#   Global variables                    #
+#                                       #
+#########################################
+globals:
+  - id: heat_pump_variant
+    type: std::string
+    initial_value: '"THZIBCTOPLINE"'
+
+#########################################
+#                                       #
+#   Packages                            #
+#                                       #
+#########################################
+packages:
+  CORE:                                  !include { file: core.yaml }
+  MANAGER:                               !include { file: templates/wp_can_id.yaml, vars: { can_node: "Manager"  , can_id: "0x480" }}
+  SPEICHER:                              !include { file: templates/wp_can_id.yaml, vars: { can_node: "Speicher" , can_id: "0x201" }}
+
+  # Temperatures (bus-verified)
+  AUSSENTEMP:                            !include { file: templates/wp_temperature.yaml, vars: { property: "AUSSENTEMP"          , update_interval: $interval_medium, target: "Kessel"   }}
+  SPEICHERISTTEMP:                       !include { file: templates/wp_temperature.yaml, vars: { property: "SPEICHERISTTEMP"     , update_interval: $interval_medium, target: "Speicher" }}
+  VORLAUFISTTEMP:                        !include { file: templates/wp_temperature.yaml, vars: { property: "VORLAUFISTTEMP"      , update_interval: $interval_medium, target: "MFG"      }}
+  RUECKLAUFISTTEMP:                      !include { file: templates/wp_temperature.yaml, vars: { property: "RUECKLAUFISTTEMP"    , update_interval: $interval_medium, target: "MFG"      }}
+  VORLAUFISTTEMP_WP:                     !include { file: templates/wp_temperature.yaml, vars: { property: "VORLAUFISTTEMP_WP"   , update_interval: $interval_medium, target: "Kessel"   }}
+  RUECKLAUFISTTEMP_WP:                   !include { file: templates/wp_temperature.yaml, vars: { property: "RUECKLAUFISTTEMP_WP" , update_interval: $interval_medium, target: "Kessel"   }}
+
+  # Pressure (bus-verified, raw 172 = 1.72 bar)
+  HEIZUNGSDRUCK:                         !include { file: templates/wp_generic.yaml, vars: { property: "HEIZUNGSDRUCK", update_interval: $interval_slow, unit: "bar", icon: "mdi:water-pressure", accuracy_decimals: "2", target: "Kessel" }}
+
+  # Operating mode (bus-verified read: 3 = Komfort, same as the ISG start page)
+  PROGRAMMSCHALTER:                      !include { file: templates/wp_select.yaml, vars: { property: PROGRAMMSCHALTER, target: "Manager", mapper_func_set: getBetriebsartId, mapper_func_get: getBetriebsart, options: ["Notbetrieb", "Bereitschaft", "Programm", "Komfort", "Eco", "Warmwasser", "Unbekannt"] }}
+
+  # Daily energy counters (bus-verified, broadcast by the Heizmodul, match the ISG energy screen)
+  EL_ENERGIEAUFNAHME_WW_TAG_SUMME_KWH:   !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_WW_TAG_SUMME_KWH"   , property_wh: "EL_ENERGIEAUFNAHME_WW_TAG_WH"   , property_kwh: "EL_ENERGIEAUFNAHME_WW_TAG_KWH"   , target: "Heizmodul" }}
+  EL_ENERGIEAUFNAHME_HEIZ_TAG_SUMME_KWH: !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_HEIZ_TAG_SUMME_KWH" , property_wh: "EL_ENERGIEAUFNAHME_HEIZ_TAG_WH" , property_kwh: "EL_ENERGIEAUFNAHME_HEIZ_TAG_KWH" , target: "Heizmodul" }}
+  WAERMEERTRAG_WW_TAG_SUMME_KWH:         !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_WW_TAG_SUMME_KWH"         , property_wh: "WAERMEERTRAG_WW_TAG_WH"         , property_kwh: "WAERMEERTRAG_WW_TAG_KWH"         , target: "Heizmodul" }}
+  WAERMEERTRAG_HEIZ_TAG_SUMME_KWH:       !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_HEIZ_TAG_SUMME_KWH"       , property_wh: "WAERMEERTRAG_HEIZ_TAG_WH"       , property_kwh: "WAERMEERTRAG_HEIZ_TAG_KWH"       , target: "Heizmodul" }}
+
+  # Lifetime energy counters (same node as the daily counters, as on the WPM family)
+  EL_ENERGIEAUFNAHME_WW_SUMME_KWH:       !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_WW_SUMME_KWH"   , scaled_property: "EL_ENERGIEAUFNAHME_WW_SUM_MWH"   , property: "EL_ENERGIEAUFNAHME_WW_SUM_KWH"   , unit: "kWh", accuracy_decimals: "0", scaler: "1000", icon: "mdi:flash", target: "Heizmodul", state_class: "total_increasing" }}
+  EL_ENERGIEAUFNAHME_HEIZ_SUMME_KWH:     !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_HEIZ_SUMME_KWH" , scaled_property: "EL_ENERGIEAUFNAHME_HEIZ_SUM_MWH" , property: "EL_ENERGIEAUFNAHME_HEIZ_SUM_KWH" , unit: "kWh", accuracy_decimals: "0", scaler: "1000", icon: "mdi:flash", target: "Heizmodul", state_class: "total_increasing" }}
+  WAERMEERTRAG_WW_SUMME_MWH:             !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_WW_SUMME_MWH"         , scaled_property: "WAERMEERTRAG_WW_SUM_KWH"         , property: "WAERMEERTRAG_WW_SUM_MWH"         , unit: "MWh", accuracy_decimals: "3", icon: "mdi:fire", target: "Heizmodul", state_class: "total_increasing" }}
+  WAERMEERTRAG_HEIZ_SUMME_MWH:           !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_HEIZ_SUMME_MWH"       , scaled_property: "WAERMEERTRAG_HEIZ_SUM_KWH"       , property: "WAERMEERTRAG_HEIZ_SUM_MWH"       , unit: "MWh", accuracy_decimals: "3", icon: "mdi:fire", target: "Heizmodul", state_class: "total_increasing" }}
+  WAERMEERTRAG_2WE_HEIZ_SUMME_MWH:       !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_2WE_HEIZ_SUMME_MWH"   , scaled_property: "WAERMEERTRAG_2WE_HEIZ_SUM_KWH"   , property: "WAERMEERTRAG_2WE_HEIZ_SUM_MWH"   , unit: "MWh", accuracy_decimals: "3", icon: "mdi:fire", target: "Heizmodul", state_class: "total_increasing" }}
+  WAERMEERTRAG_2WE_WW_SUMME_MWH:         !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_2WE_WW_SUMME_MWH"     , scaled_property: "WAERMEERTRAG_2WE_WW_SUM_KWH"     , property: "WAERMEERTRAG_2WE_WW_SUM_MWH"     , unit: "MWh", accuracy_decimals: "3", icon: "mdi:fire", target: "Heizmodul", state_class: "total_increasing" }}
+
+text:
+  - id: !extend Heizmodul_CAN_ID
+    initial_value: "0x514"

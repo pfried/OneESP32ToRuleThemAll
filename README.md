@@ -122,6 +122,7 @@ After the pull finishes, go back to your **ESPHome Dashboard** and click **Insta
 flowchart LR
     core[core.yaml<br>System Core] --> wxx[wxx_base.yaml<br>Common WXX Base]
     core --> txx[txx_base.yaml<br>Common TXX Base]
+    core --> thzibc([thz_ibc_topline.yaml<br>Manifest])
 
     wxx --> wpl_base[wpl_base.yaml<br>Common WPL Base]
 
@@ -146,12 +147,14 @@ flowchart LR
     style thz404 stroke-width:2px
     style thz504 stroke-width:2px
     style thz55 stroke-width:2px
+    style thzibc stroke-width:2px
 ~~~
 
 * **System Core (`core.yaml`)**: Fundamental hardware and network operations.
 * **Series Common Layer (`txx_base.yaml`)**: Shared logic specifically for the TXX (THZ/TTF) family.
 * **Model Base Layer (`thz_base.yaml`)**: Heavy lifting and C++ logic for specific sub-families.
 * **Device Manifests (e.g. `thz304.yaml`, `thz504.yaml`, `wpl13.yaml`)**: The clean, top-level "recipes" used to compile the firmware.
+* **`thz_ibc_topline.yaml`** (Tecalor THZ 5.1 / 7.1 IBC topline, experimental): integral unit with a WPM controller. It sits directly on `core.yaml`, uses the WPM property set and runs the bus at 50 kbit/s. See the header of the file for the node map observed on the bus.
 
 ## Add new readings from heat pump / adopt to your device
 

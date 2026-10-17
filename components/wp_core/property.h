@@ -271,7 +271,7 @@ struct Property : public oe32trta::detail::Property {
 // =======================================================================
 // 7. WPL VARIANTS
 // =======================================================================
-#if defined(WPL_13) || defined(WPL_17) || defined(WPL_23) || defined(WPE_I)
+#if defined(WPL_13) || defined(WPL_17) || defined(WPL_23) || defined(WPE_I) || defined(THZ_IBC_TOPLINE)
     PROPERTY(RUECKLAUFTEMP, 0x0016, Type::et_dec_val);
     PROPERTY(MAXRUECKLAUFTEMP, 0x0028, Type::et_dec_val);
     PROPERTY(PUFFERISTTEMPERATUR, 0x0078, Type::et_dec_val);
@@ -499,6 +499,18 @@ struct Property : public oe32trta::detail::Property {
     PROPERTY(LAUFZEIT_VD_HEIZEN, 0x07fc);
     PROPERTY(LAUFZEIT_VD_WW, 0x0802);
     PROPERTY(LAUFZEIT_VD_ABTAUEN, 0x0808);
+#endif
+
+// =======================================================================
+// 8. THZ IBC TOPLINE (Tecalor THZ 5.1 / 7.1 IBC topline)
+// =======================================================================
+// The IBC topline is an integral unit (heating, DHW, ventilation), but its
+// controller is a WPM and it shares the WPM property set of section 7.
+// Only the 2nd-heat-source DHW counters are missing there (ISG energy screen:
+// "NHZ WARMWASSER SUMME").
+#if defined(THZ_IBC_TOPLINE)
+    PROPERTY(WAERMEERTRAG_2WE_WW_SUM_KWH, 0x0924);
+    PROPERTY(WAERMEERTRAG_2WE_WW_SUM_MWH, 0x0925, Type::et_double_val);
 #endif
 };
 

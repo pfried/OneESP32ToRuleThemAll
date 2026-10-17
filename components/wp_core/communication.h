@@ -25,7 +25,7 @@ struct CanNode {
     std::uint16_t getReadId() const { return getWriteId() | 0x100; }
     std::uint16_t getResponseId() const { return getWriteId() | 0x200; }
 
-    static std::array<CanNode, 8U> all_nodes;
+    static std::array<CanNode, 9U> all_nodes;
 
     static CanNode* ESPClient;
     static CanNode* Heizmodul;
@@ -35,6 +35,7 @@ struct CanNode {
     static CanNode* FET;
     static CanNode* MFG;
     static CanNode* Manager;
+    static CanNode* Speicher;
 };
 
 using Task = std::pair<const CanNode*, const Property>;
