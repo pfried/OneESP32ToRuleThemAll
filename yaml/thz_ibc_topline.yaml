@@ -14,9 +14,12 @@
 #   0x100  ISG             polls 0x000c/0x4f41/0x4f43/0x4f46 @0x180, 0x000e @0x201
 #   0x180  Kessel          answers AUSSENTEMP, VORLAUF/RUECKLAUFISTTEMP_WP, HEIZUNGSDRUCK
 #   0x201  Speicher        answers SPEICHERISTTEMP (DHW tank)
-#   0x280  control panel   broadcasts ventilation/status data (not mapped yet)
+#   0x280  control panel   sends ventilation/status data to the ISG and fan set points to 0x500
 #   0x480  Manager         broadcasts date/time and PROGRAMMSCHALTER 0x4f1b
-#   0x500  fan/air module  polls MFG, reports 0x5132..0x5137 (not mapped yet)
+#   0x500  fan module      polls MFG, reports 0x5132..0x5137 back to 0x280
+#
+# Values that are not mapped yet can be exposed as raw diagnostic sensors with
+# thz_ibc_topline_diagnose.yaml.
 #   0x514  Heizmodul       broadcasts the daily energy counters (0x091a..0x092f)
 #   0x700  MFG             answers VORLAUFISTTEMP 0xfdf3 / RUECKLAUFISTTEMP 0xfdf4
 #
@@ -82,6 +85,8 @@ packages:
   EL_ENERGIEAUFNAHME_HEIZ_TAG_SUMME_KWH: !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_HEIZ_TAG_SUMME_KWH" , property_wh: "EL_ENERGIEAUFNAHME_HEIZ_TAG_WH" , property_kwh: "EL_ENERGIEAUFNAHME_HEIZ_TAG_KWH" , target: "Heizmodul" }}
   WAERMEERTRAG_WW_TAG_SUMME_KWH:         !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_WW_TAG_SUMME_KWH"         , property_wh: "WAERMEERTRAG_WW_TAG_WH"         , property_kwh: "WAERMEERTRAG_WW_TAG_KWH"         , target: "Heizmodul" }}
   WAERMEERTRAG_HEIZ_TAG_SUMME_KWH:       !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_HEIZ_TAG_SUMME_KWH"       , property_wh: "WAERMEERTRAG_HEIZ_TAG_WH"       , property_kwh: "WAERMEERTRAG_HEIZ_TAG_KWH"       , target: "Heizmodul" }}
+  WAERMEERTRAG_2WE_WW_TAG_SUMME_KWH:     !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_2WE_WW_TAG_SUMME_KWH"     , property_wh: "WAERMEERTRAG_2WE_WW_TAG_WH"     , property_kwh: "WAERMEERTRAG_2WE_WW_TAG_KWH"     , target: "Heizmodul" }}
+  WAERMEERTRAG_2WE_HEIZ_TAG_SUMME_KWH:   !include { file: templates/wp_daily_energy_combined.yaml, vars: { sensor_name: "WAERMEERTRAG_2WE_HEIZ_TAG_SUMME_KWH"   , property_wh: "WAERMEERTRAG_2WE_HEIZ_TAG_WH"   , property_kwh: "WAERMEERTRAG_2WE_HEIZ_TAG_KWH"   , target: "Heizmodul" }}
 
   # Lifetime energy counters (same node as the daily counters, as on the WPM family)
   EL_ENERGIEAUFNAHME_WW_SUMME_KWH:       !include { file: templates/wp_generic_combined.yaml, vars: { sensor_name: "EL_ENERGIEAUFNAHME_WW_SUMME_KWH"   , scaled_property: "EL_ENERGIEAUFNAHME_WW_SUM_MWH"   , property: "EL_ENERGIEAUFNAHME_WW_SUM_KWH"   , unit: "kWh", accuracy_decimals: "0", scaler: "1000", icon: "mdi:flash", target: "Heizmodul", state_class: "total_increasing" }}

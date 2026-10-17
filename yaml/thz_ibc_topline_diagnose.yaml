@@ -1,0 +1,229 @@
+#########################################
+#                                       #
+#   THZ IBC topline – diagnostics       #
+#                                       #
+#########################################
+# Optional companion to thz_ibc_topline.yaml. Exposes values that show up on
+# the bus but are not identified yet as raw diagnostic sensors, so they can be
+# compared with the display (Info menu) over time and then given real names.
+# Purely passive: nothing is requested or written.
+#
+# Name pattern: DIAG_<sender>_<index>. The scale is a guess (x0.1 where the raw
+# value looks like a temperature/percentage). 0x8000 ("not available") is
+# published as unknown. The comment behind each entry is the range observed so far.
+
+sensor:
+  - platform: template
+    name: "DIAG_280_50EA"   # 22.7-22.8
+    id: DIAG_280_50EA
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50EB"   # 51.9-53.4
+    id: DIAG_280_50EB
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50EE"   # 80.8-81.5
+    id: DIAG_280_50EE
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50F0"   # 20.3-20.6
+    id: DIAG_280_50F0
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50F5"   # 3.3-3.7
+    id: DIAG_280_50F5
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50F9"   # 4.3-4.7
+    id: DIAG_280_50F9
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_515E"   # 27.4-27.7
+    id: DIAG_280_515E
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_515F"   # 12.8-14.7
+    id: DIAG_280_515F
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50CD"   # 37.0
+    id: DIAG_280_50CD
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50D1"   # -3.0
+    id: DIAG_280_50D1
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_50DD"   # 8.1
+    id: DIAG_280_50DD
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_5044"   # 282-299
+    id: DIAG_280_5044
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_5046"   # 13442-13506
+    id: DIAG_280_5046
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_5048"   # 23920
+    id: DIAG_280_5048
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_7AC1"   # 50-52 (to 0x500)
+    id: DIAG_280_7AC1
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_280_7ACE"   # 59-61 (to 0x500)
+    id: DIAG_280_7ACE
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_000C"   # 14.4-15.6
+    id: DIAG_500_000C
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5132"   # 2.0-2.2
+    id: DIAG_500_5132
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5133"   # 3.4
+    id: DIAG_500_5133
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5134"   # 5.0-5.2
+    id: DIAG_500_5134
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5135"   # 5.0-5.2
+    id: DIAG_500_5135
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5136"   # 5.9-6.1
+    id: DIAG_500_5136
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_500_5137"   # 5.9-6.1
+    id: DIAG_500_5137
+    entity_category: diagnostic
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    name: "DIAG_480_0074"   # 1
+    id: DIAG_480_0074
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_480_4EDA"   # 16
+    id: DIAG_480_4EDA
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+  - platform: template
+    name: "DIAG_480_4F33"   # counter
+    id: DIAG_480_4F33
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    update_interval: never
+
+canbus:
+  - id: !extend wp_can
+    on_frame:
+      - can_id: 0
+        can_id_mask: 0
+        then:
+          - lambda: |-
+              if (x.size() < 5) return;
+              const unsigned typ = x[0] & 0x0F;
+              if (typ != 0 && typ != 2) return;  // only writes/broadcasts and responses carry values
+              std::uint16_t idx;
+              std::int16_t raw;
+              if (x.size() >= 7 && x[2] == 0xFA) {
+                idx = (x[3] << 8) | x[4];
+                raw = static_cast<std::int16_t>((x[5] << 8) | x[6]);
+              } else {
+                idx = x[2];
+                raw = static_cast<std::int16_t>((x[3] << 8) | x[4]);
+              }
+              struct Diag { std::uint16_t sender; std::uint16_t idx; esphome::sensor::Sensor *sensor; float scale; };
+              const Diag table[] = {
+                {0x280, 0x50EA, id(DIAG_280_50EA), 0.1f},
+                {0x280, 0x50EB, id(DIAG_280_50EB), 0.1f},
+                {0x280, 0x50EE, id(DIAG_280_50EE), 0.1f},
+                {0x280, 0x50F0, id(DIAG_280_50F0), 0.1f},
+                {0x280, 0x50F5, id(DIAG_280_50F5), 0.1f},
+                {0x280, 0x50F9, id(DIAG_280_50F9), 0.1f},
+                {0x280, 0x515E, id(DIAG_280_515E), 0.1f},
+                {0x280, 0x515F, id(DIAG_280_515F), 0.1f},
+                {0x280, 0x50CD, id(DIAG_280_50CD), 0.1f},
+                {0x280, 0x50D1, id(DIAG_280_50D1), 0.1f},
+                {0x280, 0x50DD, id(DIAG_280_50DD), 0.1f},
+                {0x280, 0x5044, id(DIAG_280_5044), 1.0f},
+                {0x280, 0x5046, id(DIAG_280_5046), 1.0f},
+                {0x280, 0x5048, id(DIAG_280_5048), 1.0f},
+                {0x280, 0x7AC1, id(DIAG_280_7AC1), 1.0f},
+                {0x280, 0x7ACE, id(DIAG_280_7ACE), 1.0f},
+                {0x500, 0x000C, id(DIAG_500_000C), 0.1f},
+                {0x500, 0x5132, id(DIAG_500_5132), 0.1f},
+                {0x500, 0x5133, id(DIAG_500_5133), 0.1f},
+                {0x500, 0x5134, id(DIAG_500_5134), 0.1f},
+                {0x500, 0x5135, id(DIAG_500_5135), 0.1f},
+                {0x500, 0x5136, id(DIAG_500_5136), 0.1f},
+                {0x500, 0x5137, id(DIAG_500_5137), 0.1f},
+                {0x480, 0x0074, id(DIAG_480_0074), 1.0f},
+                {0x480, 0x4EDA, id(DIAG_480_4EDA), 1.0f},
+                {0x480, 0x4F33, id(DIAG_480_4F33), 1.0f},
+              };
+              for (const auto &d : table) {
+                if (d.sender == can_id && d.idx == idx) {
+                  const float value = (raw == static_cast<std::int16_t>(0x8000)) ? NAN : raw * d.scale;
+                  if (std::isnan(value) ? !std::isnan(d.sensor->state) : d.sensor->state != value) {
+                    d.sensor->publish_state(value);
+                  }
+                  return;
+                }
+              }

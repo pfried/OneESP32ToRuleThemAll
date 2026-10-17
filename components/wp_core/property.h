@@ -506,11 +506,16 @@ struct Property : public oe32trta::detail::Property {
 // =======================================================================
 // The IBC topline is an integral unit (heating, DHW, ventilation), but its
 // controller is a WPM and it shares the WPM property set of section 7.
-// Only the 2nd-heat-source DHW counters are missing there (ISG energy screen:
-// "NHZ WARMWASSER SUMME").
+// Only the 2nd-heat-source (NHZ) counters are missing there: the daily ones are
+// broadcast by the Heizmodul (0x514) together with the other daily counters,
+// the DHW sum is shown by the ISG as "NHZ WARMWASSER SUMME".
 #if defined(THZ_IBC_TOPLINE)
+    PROPERTY(WAERMEERTRAG_2WE_WW_TAG_WH, 0x0922);
+    PROPERTY(WAERMEERTRAG_2WE_WW_TAG_KWH, 0x0923, Type::et_double_val);
     PROPERTY(WAERMEERTRAG_2WE_WW_SUM_KWH, 0x0924);
     PROPERTY(WAERMEERTRAG_2WE_WW_SUM_MWH, 0x0925, Type::et_double_val);
+    PROPERTY(WAERMEERTRAG_2WE_HEIZ_TAG_WH, 0x0926);
+    PROPERTY(WAERMEERTRAG_2WE_HEIZ_TAG_KWH, 0x0927, Type::et_double_val);
 #endif
 };
 
